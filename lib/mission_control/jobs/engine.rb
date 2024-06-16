@@ -86,11 +86,6 @@ module MissionControl
         end
       end
 
-      initializer "mission_control-jobs.assets" do |app|
-        app.config.assets.paths << root.join("app/javascript")
-        app.config.assets.precompile += %w[ mission_control_jobs_manifest ]
-      end
-
       initializer "mission_control-jobs.importmap", before: "importmap" do |app|
         app.config.importmap.paths << root.join("config/importmap.rb")
         app.config.importmap.cache_sweepers << root.join("app/javascript")
