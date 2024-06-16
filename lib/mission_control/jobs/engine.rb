@@ -1,10 +1,6 @@
 require "mission_control/jobs/version"
 require "mission_control/jobs/engine"
 
-require "importmap-rails"
-require "turbo-rails"
-require "stimulus-rails"
-
 module MissionControl
   module Jobs
     class Engine < ::Rails::Engine
@@ -63,32 +59,6 @@ module MissionControl
 
           MissionControl::Jobs.applications.add(app.class.module_parent.name, queue_adapters_by_name)
         end
-      end
-
-      console do
-        require "irb"
-
-        IRB::Command.register :connect_to, Console::ConnectTo
-        IRB::Command.register :jobs_help, Console::JobsHelp
-
-        IRB::Context.prepend(MissionControl::Jobs::Console::Context)
-
-        MissionControl::Jobs.delay_between_bulk_operation_batches = 2
-        MissionControl::Jobs.logger = ActiveSupport::Logger.new(STDOUT)
-
-        if MissionControl::Jobs.applications.one? && (application = MissionControl::Jobs.applications.first) && application.servers.one?
-          MissionControl::Jobs::Current.application = application
-          MissionControl::Jobs::Current.server = application.servers.first
-        end
-
-        if MissionControl::Jobs.show_console_help
-          puts "\n\nType 'jobs_help' to see how to connect to the available job servers to manage jobs\n\n"
-        end
-      end
-
-      initializer "mission_control-jobs.importmap", before: "importmap" do |app|
-        app.config.importmap.paths << root.join("config/importmap.rb")
-        app.config.importmap.cache_sweepers << root.join("app/javascript")
       end
     end
   end
